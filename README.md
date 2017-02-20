@@ -7,7 +7,7 @@ Codes of Kokubun-lab. homepage by Mitsuteru Kokubun
 
 ### Processing 編
 
-1. AR を作ってみよう
+1. [AR を作ってみよう](https://github.com/mkokubun/kkblab-hp/tree/master/processing/ar)
 
     Processing と NyARToolkit で簡単な AR（Augmented Reality; 拡張現実）プログラムを作ってみる内容です。
 
@@ -17,14 +17,17 @@ Codes of Kokubun-lab. homepage by Mitsuteru Kokubun
 
 ### JavaScript 編（予定）
 
-    今後随時コンテンツを増やしていきます。
 
 
 ### Arduino 編（予定）
 
-    今後随時コンテンツを増やしていきます。
 
 
 ### Raspberry Pi 編（予定）
 
-    今後随時コンテンツを増やしていきます。
+
+## 更新履歴
+
+* 2017/02/20
+    * リポジトリ kkblab-hp を作成しました
+    * Processing 編 に 「AR を作ってみよう」をアップしました
