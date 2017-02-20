@@ -10,7 +10,7 @@ Codes of Kokubun-lab. homepage by Mitsuteru Kokubun
 
 ### Processing 編
 
-1. [AR を作ってみよう](processing/ar)
+1. [AR を作ろう](processing/ar)
 
     Processing と NyARToolkit で簡単な AR（Augmented Reality; 拡張現実）プログラムを作ってみる内容です。
 
@@ -33,4 +33,4 @@ Codes of Kokubun-lab. homepage by Mitsuteru Kokubun
 
 * 2017/02/20
     * リポジトリ kkblab-hp を作成しました
-    * Processing 編 に 「AR を作ってみよう」をアップしました
+    * Processing 編 に 「AR を作ろう」をアップしました
