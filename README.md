@@ -2,6 +2,9 @@
 Codes of Kokubun-lab. homepage by Mitsuteru Kokubun
 
 サイト「[こくぶん研究室](http://www2.aasa.ac.jp/people/mkoku/)」の Make コーナーで紹介しているプログラムのソースコードや必要なファイル群です。
+詳しい解説は以下を参照してください。
+
+こくぶん研究室： http://www2.aasa.ac.jp/people/mkoku/
 
 ## コンテンツ
 
