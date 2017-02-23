@@ -1,51 +1,53 @@
-import processing.video.*;               // using "video" library
-import jp.nyatla.nyar4psg.*;             // using "nyar4psg" library
+// Coded by Mitsuteru Kokubun
 
-Capture cam;                             // declaration of Capture object
-MultiNft nft;                            // declaration of MultiNft object
-PShape obj;                              // declaration of PShape array object
-int pz;                                  // variable for rotation of 3DCG model
-
+import processing.video.*;               // video ライブラリを使う
+import jp.nyatla.nyar4psg.*;             // nyar4psg ライブラリを使う
+ 
+Capture cam;                             // Capture オブジェクトの宣言
+MultiNft nft;                            // ★ MultiNft オブジェクトの宣言
+PShape obj;                              // CG を扱う PShape オブジェクトの宣言
+int pz;                                  // ★ CG モデルを動かすための変数 pz の宣言
+ 
 void setup() {
-  // window and camera settings
-  size(640, 480, P3D);                   // setting size of window with P3D mode
-  String[] cameras = Capture.list();     // getting available camera devices
-  printArray(cameras);                   // listing available camera devices
-  cam = new Capture(this, cameras[0]);   // * Rewrite [x] with the device number you use.
-  cam.start();                           // starting capture
-  // NyARToolkit settings
-  nft = new MultiNft(this,               // initial settings of NyARToolkit
-             width,                      // width of the input image
-             height,                     // height of the input image
-             "camera_para.dat",          // camera calibration parameter file
-             NyAR4PsgConfig.CONFIG_PSG); // configuration for Processing
-  nft.addNftTarget("launchpad", 145);    // adding NFT target[0] (name, target_width[mm])
-  // PShape setting
-  obj = loadShape("rocket.obj");         // loading a 3DCG model named "drop.obj"
+  // ウィンドウとカメラの設定
+  size(640, 480, P3D);                   // ウィンドウのサイズ設定（P3Dモード）
+  String[] cameras = Capture.list();     // 利用可能なカメラデバイスを取得
+  printArray(cameras);                   // 利用可能なカメラデバイスをコンソールに表示
+  cam = new Capture(this, cameras[0]);   // ★ cameras[ ] 内にカメラのテストで控えた数字を入れる
+  cam.start();                           // カメラをスタート
+  // NyARToolkit の設定
+  nft = new MultiNft(this,               // ★ NyARToolkit の初期設定
+             width,                      // カメラ画像の幅（ウィンドウの幅と同じ 640）
+             height,                     // カメラ画像の高さ（ウィンドウの高さと同じ 480）
+             "camera_para.dat",          // カメラの校正ファイル
+             NyAR4PsgConfig.CONFIG_PSG); // cnyar4psg を Processing 用に設定する決まり文句
+  nft.addNftTarget("launchpad", 145);    // ★ 認識するターゲット画像を登録 (ファイル名, 画像の幅[mm])
+  // PShape の設定
+  obj = loadShape("rocket.obj");         // "rocket.obj" という名前の CG モデルを読み込む
 }
-
+ 
 void draw() {
-  // video capture
-  if(cam.available() == false) {         // if camera is not available
-    return;                              // do nothing and return
+  // ビデオキャプチャ
+  if(cam.available() == false) {         // カメラが利用可能な状態でなければ
+    return;                              // 何もせず処理を終える
   }
-  cam.read();                            // capturing image
-  // Start of AR process
-  nft.detect(cam);                       // detecting marker within captured image
-  nft.drawBackground(cam);               // drawing captured image on background
-  if(nft.isExist(0) == false) {          // if target[0] is not exist within the image
-    return;                              // do nothing and find next target
+  cam.read();                            // 映像をキャプチャする
+  // AR 処理の開始
+  nft.detect(cam);                       // ★ キャプチャした画像内でマーカを探す
+  nft.drawBackground(cam);               // ★ ウィンドウの背景にキャプチャした画像を設定
+  if(nft.isExist(0) == false) {          // ★ ターゲット[0] が存在しなければ
+    return;                              // 何もせず処理を終える
   }
-  nft.beginTransform(0);                 // starting coordinate projection based on target[i]
-    lights();                            // adding lights in the 3D scene
-    scale(0.15);                         // adjusting the size of the 3DCG model
-    translate(-500, 300, pz);            // adjusting the position of the 3DCG model
-    rotateX(PI/4);                       // rotating the 3DCG model 45 degrees around the X axis
-    shape(obj);                          // displaying the 3DCG model
-  nft.endTransform();                    // ending coordinate projection
-  // End of AR process
-  pz += 20;                              // changing rotation angle
-  if(pz > 1000) {                        // 
-    pz = 0;                              // 
+  nft.beginTransform(0);                 // ★ ターゲット[0] の位置にもとづいて座標の投射（変換）を始める
+    lights();                            // 3D シーンに照明を追加
+    scale(0.15);                         // ★ CG モデルのサイズを調整
+    translate(-500, 300, pz);            // ★ 原点の位置の調整
+    rotateX(PI/4);                       // ★ CG モデルを X軸まわりに 45度（π/4）回転させる
+    shape(obj);                          // CG モデルを表示
+  nft.endTransform();                    // ★ 座標の投射（変換）を終了
+  // AR 処理の終了
+  pz += 20;                              // ★ CG を動かす値を増やす
+  if(pz > 1000) {                        // ★ もし pz が 一定値以上なら
+    pz = 0;                              // ★ 元の位置に戻す
   }
 }

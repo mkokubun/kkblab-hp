@@ -1,30 +1,23 @@
-// cam_test.pde
-// Install "video" library via "Add Library" tool of Processing IDE.
-// Connect a Web camera to your PC.
-// Run this sketch once.
-// Find a camera device number with "size=640x480,fps=30" from the list.
-// * Rewrite "x" with the device number you use.
-// Run this sketch again, and confirm the video is shown.
-// Coded by Mitsuteru Kokubun, 2017/02/20
+// Coded by Mitsuteru Kokubun
 
-import processing.video.*;               // using "video" library
-
-Capture cam;                             // declaration of Capture object
-
-// setup() function is executed once
+import processing.video.*;               // video ライブラリを使う
+ 
+Capture cam;                             // Capture オブジェクトの宣言
+ 
+// 一度だけ実行される setup() 関数
 void setup() {
-  size(640, 480);                        // setting size of window
-  String[] cameras = Capture.list();     // getting available camera devices
-  printArray(cameras);                   // listing available camera devices
-  cam = new Capture(this, cameras[12]);  // * Rewrite [x] with the device number you use.
-  cam.start();                           // starting capture
+  size(640, 480);                        // ウィンドウのサイズ設定
+  String[] cameras = Capture.list();     // 利用可能なカメラデバイスを取得
+  printArray(cameras);                   // 利用可能なカメラデバイスをコンソールに表示
+  cam = new Capture(this, cameras[0]);   // ★ [0]の部分はあとから書き換える
+  cam.start();                           // カメラをスタート
 }
-
-// draw() function is exectuted repeatedly
+ 
+// 繰り返し実行される draw() 関数
 void draw() {
-  if(cam.available() == false) {         // if camera is not available
-    return;                              // do nothing and return
+  if(cam.available() == false) {         // カメラが利用可能な状態でなければ
+    return;                              // 何もせず処理を終える
   }
-  cam.read();                            // capturing image
-  image(cam, 0, 0);                      // displaying captured image
+  cam.read();                            // 映像をキャプチャする
+  image(cam, 0, 0);                      // キャプチャした画像を表示する
 }

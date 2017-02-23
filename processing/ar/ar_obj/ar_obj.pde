@@ -1,64 +1,51 @@
-// ar_obj.pde
-// A 3DCG (*.obj) AR demo using NyARToolkit and Proceccing 3.
-// Install "video" library via "Add Library" tool of the Processing IDE.
-// Install "nyar4psg" library according to the URL below.
-// Connect a Web camera to your PC.
-// * Rewrite "x" with the camera device number you use.
-// Place "camera_para.dat" in "data" folder of this sketch.
-//   - "camera_para.dat" is included within ./libraries/nyar4psg/data
-// Place "rocket.obj", "rocket.mtl", and "rocket.png" in "data" folder of this sketch.
-//   - "rocket.*" are included within ./Processing_3.x.x/
-//       modes/java/exmples/Basics/Shape/LoadDisplayOBJ/data
-// Print NyID markers on paper. ("NyId_000-005.pdf")
-// Run this sketch, and check that a rocket of 3DCG is superimposed on the marker.
-// Coded by Mitsuteru Kokubun, 2017/02/20
+// Coded by Mitsuteru Kokubun
 
-import processing.video.*;               // using "video" library
-import jp.nyatla.nyar4psg.*;             // using "nyar4psg" library
-
-Capture cam;                             // declaration of Capture object
-MultiMarker mm;                          // declaration of MultiMarker object
-PShape obj;                              // declaration of PShape object
-float ry;                                // variable for rotation of 3DCG model
-
+import processing.video.*;               // video ライブラリを使う
+import jp.nyatla.nyar4psg.*;             // nyar4psg ライブラリを使う
+ 
+Capture cam;                             // Capture オブジェクトの宣言
+MultiMarker mm;                          // MultiMarker オブジェクトの宣言
+PShape obj;                              // CG を扱う PShape オブジェクトの宣言
+float ry;                                // CG モデルを回転させるための変数 ry の宣言
+ 
 void setup() {
-  // window and camera settings
-  size(640, 480, P3D);                   // setting size of window with P3D mode
-  String[] cameras = Capture.list();     // getting available camera devices
-  printArray(cameras);                   // listing available camera devices
-  cam = new Capture(this, cameras[12]);  // * Rewrite [x] with the device number you use.
-  cam.start();                           // starting capture
-  // NyARToolkit settings
-  mm = new MultiMarker(this,             // initial settings of NyARToolkit
-             width,                      // width of the input image
-             height,                     // height of the input image
-             "camera_para.dat",          // camera calibration parameter file
-             NyAR4PsgConfig.CONFIG_PSG); // configuration for Processing
-  mm.addNyIdMarker(0, 80);               // adding NyId marker(ID, marker_width[mm])
-  // PShape setting
-  obj = loadShape("rocket.obj");         // loading a 3DCG model named "rocket.obj"
+  // ウィンドウとカメラの設定
+  size(640, 480, P3D);                   // ウィンドウのサイズ設定（P3Dモード）
+  String[] cameras = Capture.list();     // 利用可能なカメラデバイスを取得
+  printArray(cameras);                   // 利用可能なカメラデバイスをコンソールに表示
+  cam = new Capture(this, cameras[0]);   // ★ cameras[ ] 内にカメラのテストで控えた数字を入れる
+  cam.start();                           // カメラをスタート
+  // NyARToolkit の設定
+  mm = new MultiMarker(this,             // NyARToolkit の初期設定
+             width,                      // カメラ画像の幅（ウィンドウの幅と同じ 640）
+             height,                     // カメラ画像の高さ（ウィンドウの高さと同じ 480）
+             "camera_para.dat",          // カメラの校正ファイル
+             NyAR4PsgConfig.CONFIG_PSG); // nyar4psg を Processing 用に設定する決まり文句
+  mm.addNyIdMarker(0, 80);               // 認識するマーカを登録する (ID, マーカの幅[mm])
+  // PShape の設定
+  obj = loadShape("rocket.obj");         // "rocket.obj" という名前の CG モデルを読み込む
 }
-
+ 
 void draw() {
-  // video capture
-  if(cam.available() == false) {         // if camera is not available
-    return;                              // do nothing and return
+  // ビデオキャプチャ
+  if(cam.available() == false) {         // カメラが利用可能な状態でなければ
+    return;                              // 何もせず処理を終える
   }
-  cam.read();                            // capturing image
-  // Start of AR process
-  mm.detect(cam);                        // detecting marker within captured image
-  mm.drawBackground(cam);                // drawing captured image on background
-  if(mm.isExist(0) == false) {           // if marker[0] is not exist within the image
-    return;                              // do nothing and return
+  cam.read();                            // 映像をキャプチャする
+  // AR 処理の開始
+  mm.detect(cam);                        // キャプチャした画像内でマーカを探す
+  mm.drawBackground(cam);                // ウィンドウの背景にキャプチャした画像を設定
+  if(mm.isExist(0) == false) {           // マーカ[0] が存在しなければ
+    return;                              // 何もせず処理を終える
   }
-  mm.beginTransform(0);                  // starting coordinate projection based on marker[0]
-    lights();                            // adding lights in the 3D scene
-    scale(0.3);                          // adjusting the size of the 3DCG model
-    translate(0, 0, 80);                 // adjusting the position of the 3DCG model
-    rotateX(PI/2);                       // rotating the 3DCG model 90 degrees around the X axis
-    rotateY(ry);                         // rotating the 3DCG model ry radians around the Y axis
-    shape(obj);                          // displaying the 3DCG model
-  mm.endTransform();                     // ending coordinate projection
-  // End of AR process
-  ry += 0.1;                             // changing rotation angle
+  mm.beginTransform(0);                  // マーカ[0] の位置にもとづいて座標の投射（変換）を始める
+    lights();                            // 3D シーンに照明を追加
+    scale(0.3);                          // CG モデルのサイズを調整
+    translate(0, 0, 80);                 // 原点の位置の調整（原点をZ軸方向に 80mm 移動）
+    rotateX(PI/2);                       // CG モデルを X軸まわりに 90度（π/2）回転させる
+    rotateY(ry);                         // CG モデルを Y軸まわりに ry ぶん回転させる
+    shape(obj);                          // CG モデルを表示
+  mm.endTransform();                     // 座標の投射（変換）を終了
+  // AR 処理の終了
+  ry += 0.1;                             // rotateY(ry); で回転させる角度 ry を少し増やす
 }

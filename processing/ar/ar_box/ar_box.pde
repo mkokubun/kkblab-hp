@@ -1,54 +1,43 @@
-// ar_box.pde
-// A simple AR demo using NyARToolkit and Proceccing 3.
-// Install "video" library via "Add Library" tool of Processing IDE.
-// Install "nyar4psg" library according to the URL below.
-//   -> https://github.com/nyatla/NyARToolkit-for-Processing/
-// Connect a Web camera to your PC.
-// * Rewrite "x" with the camera device number you use.
-// Place "camera_para.dat" in "data" folder of this sketch.
-//   - "camera_para.dat" is included within ./libraries/nyar4psg/data
-// Print NyID markers on paper. ("NyId_000-005.pdf")
-// Run this sketch, and check that an orange transparent box is superimposed on the marker.
-// Coded by Mitsuteru Kokubun, 2017/02/20
+// Coded by Mitsuteru Kokubun
 
-import processing.video.*;               // using "video" library
-import jp.nyatla.nyar4psg.*;             // using "nyar4psg" library
-
-Capture cam;                             // declaration of Capture object
-MultiMarker mm;                          // declaration of MultiMarker object
-
+import processing.video.*;               // video ライブラリを使う
+import jp.nyatla.nyar4psg.*;             // nyar4psg ライブラリを使う
+ 
+Capture cam;                             // Capture オブジェクトの宣言
+MultiMarker mm;                          // MultiMarker オブジェクトの宣言
+ 
 void setup() {
-  // window and camera settings
-  size(640, 480, P3D);                   // setting size of window with P3D mode
-  String[] cameras = Capture.list();     // getting available camera devices
-  printArray(cameras);                   // listing available camera devices
-  cam = new Capture(this, cameras[12]);  // * Rewrite [x] with the device number you use.
-  cam.start();                           // starting capture
-  // NyARToolkit settings
-  mm = new MultiMarker(this,             // initial settings of NyARToolkit
-             width,                      // width of the input image
-             height,                     // height of the input image
-             "camera_para.dat",          // camera calibration parameter file
-             NyAR4PsgConfig.CONFIG_PSG); // configuration for Processing
-  mm.addNyIdMarker(0, 80);               // adding NyId marker(ID, marker_width[mm])
+  // ウィンドウとカメラの設定
+  size(640, 480, P3D);                   // ウィンドウのサイズ設定（P3Dモード）
+  String[] cameras = Capture.list();     // 利用可能なカメラデバイスを取得
+  printArray(cameras);                   // 利用可能なカメラデバイスをコンソールに表示
+  cam = new Capture(this, cameras[0]);   // ★ cameras[ ] 内にカメラのテストで控えた数字を入れる
+  cam.start();                           // カメラをスタート
+  // NyARToolkit の設定
+  mm = new MultiMarker(this,             // NyARToolkit の初期設定
+             width,                      // カメラ画像の幅（ウィンドウの幅と同じ 640）
+             height,                     // カメラ画像の高さ（ウィンドウの高さと同じ 480）
+             "camera_para.dat",          // カメラの校正ファイル
+             NyAR4PsgConfig.CONFIG_PSG); // nyar4psg を Processing 用に設定する決まり文句
+  mm.addNyIdMarker(0, 80);               // 認識するマーカを登録する (ID, マーカの幅[mm])
 }
-
+ 
 void draw() {
-  // video capture
-  if(cam.available() == false) {         // if camera is not available
-    return;                              // do nothing and return
+  // ビデオキャプチャ
+  if(cam.available() == false) {         // カメラが利用可能な状態でなければ
+    return;                              // 何もせず処理を終える
   }
-  cam.read();                            // capturing image
-  // Start of AR process
-  mm.detect(cam);                        // detecting marker within captured image
-  mm.drawBackground(cam);                // drawing captured image on background
-  if(mm.isExist(0) == false) {           // if marker[0] is not exist within the image
-    return;                              // do nothing and return
+  cam.read();                            // 映像をキャプチャする
+  // AR 処理の開始
+  mm.detect(cam);                        // キャプチャした画像内でマーカを探す
+  mm.drawBackground(cam);                // ウィンドウの背景にキャプチャした画像を設定
+  if(mm.isExist(0) == false) {           // マーカ[0] が存在しなければ
+    return;                              // 何もせず処理を終える
   }
-  mm.beginTransform(0);                  // starting coordinate projection based on marker[0]
-    translate(0, 0, 40);                 // move the origin 40 mm in the Z axis direction
-    fill(255, 165, 0, 127);              // fill color(R, G, B, opacity)
-    box(80);                             // draw a 80 mm square box
-  mm.endTransform();                     // ending coordinate projection
-  // End of AR process
+  mm.beginTransform(0);                  // マーカ[0] の位置にもとづいて座標の投射（変換）を始める
+    translate(0, 0, 40);                 // 原点の位置の調整（原点をZ軸方向に 40mm 移動）
+    fill(255, 165, 0, 127);              // CG の塗りつぶしの設定 (R, G, B, 不透明度)
+    box(80);                             // 80mm 四方の箱の CG を描く
+  mm.endTransform();                     // 座標の投射（変換）を終了
+  // AR 処理の終了
 }
