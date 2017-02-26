@@ -23,7 +23,11 @@ Codes of Kokubun-lab. homepage by Mitsuteru Kokubun
     Kinect V1 + Kinect for Windows SDK v1.8 + Kinect4WinSDK で遊ぶ内容です。
     http://www2.aasa.ac.jp/people/mkoku/make/processing/kinect.html
 
-3. 随時増やしていきます
+3. [Leap Motion で遊ぼう](processing/leap)
+    Leap Motion (Driver 3.2.0 (Orion)) + Java 用 SDK (LeapJava) で遊ぶ内容です。特別なライブラリは使っていません。
+    http://www2.aasa.ac.jp/people/mkoku/make/processing/leap.html
+
+4. 随時増やしていきます
 
 
 ### JavaScript 編（予定）
