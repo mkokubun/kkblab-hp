@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<!-- スマホで見やすくする設定 -->
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<!-- ブラウザのタブに表示されるタイトル -->
+<title>写真を撮る・見る</title>
+</head>
+
+<body>
+<input  id="chooser" type="file" accept="image/*">      <!-- ファイル選択ダイアログ（カメラも使える） -->
+<canvas id='canvas' width='300' height='400'></canvas>  <!-- 絵を描くcanvas要素 -->
+
+<script>
+
+// canvas要素に描画するためのお決まりの2行
+var canvas  = document.getElementById("canvas");        // canvas 要素の取得
+var context = canvas.getContext("2d");			        // 描画用部品を取得
+
+// ファイルを読む（カメラを使う）準備
+var chooser = document.getElementById("chooser");       // ファイル選択用 input 要素の取得
+var reader  = new FileReader();                         // ファイルを読む FileReader オブジェクトを作成
+var image   = new Image();                              // 画像を入れておく Image オブジェクトを作成
+// ファイルを読み込む処理
+chooser.addEventListener("change", () => {              // ファイル選択ダイアログの値が変わったら
+    var file = chooser.files[0];                        // ファイル名取得
+    reader.readAsDataURL(file);                         // FileReader でファイルを読み込む
+});
+reader.addEventListener("load", () => {                 // FileReader がファイルの読み込みを完了したら
+    image.src = reader.result;                          // Image オブジェクトに読み込み結果を入れる
+});
+image.addEventListener("load", () => {                  // Image オブジェクトに画像が入ったら
+    context.drawImage(image, 0, 0, 300, 400);           // 画像を canvas に描く（Image, Left, Top, Width, Height）
+});
+
+</script>
+</body>
+</html>

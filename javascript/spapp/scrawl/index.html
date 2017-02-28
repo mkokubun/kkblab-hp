@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<!-- スマホで見やすくする設定 -->
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<!-- ブラウザのタブに表示されるタイトル -->
+<title>写真に落書き</title>
+</head>
+
+<body>
+<input  id="chooser" type="file" accept="image/*">      <!-- ファイル選択ダイアログ（カメラも使える） -->
+<canvas id='canvas' width='300' height='400'></canvas>  <!-- 絵を描くcanvas要素 -->
+<input  id="color" type="color" value="#000000">        <!-- 色選択ダイアログ -->
+<button id="button">保存（新規タブに表示）</button>       <!-- 保存ボタン -->
+
+<script>
+
+var touching = false;                                   // タッチ中か否かを入れる変数
+var startX   = 0;                                       // タッチ開始位置のX座標
+var startY   = 0;                                       // タッチ開始位置のY座標
+var penColor = "#000000";                               // 線の色（#RRGGBB）
+var penWidth = 5;                                       // 線の幅
+
+// canvas要素に描画するためのお決まりの2行
+var canvas  = document.getElementById("canvas");        // canvas 要素の取得
+var context = canvas.getContext("2d");                  // 描画用部品を取得
+
+// ファイルを読む（カメラを使う）準備
+var chooser = document.getElementById("chooser");       // ファイル選択用 input 要素の取得
+var reader  = new FileReader();                         // ファイルを読む FileReader オブジェクトを作成
+var image   = new Image();                              // 画像を入れておく Image オブジェクトを作成
+// ファイルを読み込む処理
+chooser.addEventListener("change", () => {              // ファイル選択ダイアログの値が変わったら
+    var file = chooser.files[0];                        // ファイル名取得
+    reader.readAsDataURL(file);                         // FileReader でファイルを読み込む
+});
+reader.addEventListener("load", () => {                 // FileReader がファイルの読み込みを完了したら
+    image.src = reader.result;                          // Image オブジェクトに読み込み結果を入れる
+});
+image.addEventListener("load", () => {                  // Image オブジェクトに画像が入ったら
+    context.drawImage(image, 0, 0, 300, 400);           // 画像を canvas に描く（Image, Left, Top, Width, Height）
+});
+
+// タッチ開始イベントが起きたら
+canvas.addEventListener("touchstart", (e) => {
+    touching = true;                                    // タッチ中にする
+    // タッチ開始時の指の座標（開始座標）を得る
+    startX = e.touches[0].pageX - canvas.offsetLeft;    // X座標
+    startY = e.touches[0].pageY - canvas.offsetTop;     // Y座標
+});
+
+// タッチしたまま指が動いたら
+canvas.addEventListener("touchmove", (e) => {
+    e.preventDefault();                                 // 画面をスクロールさせない
+    if(touching == true) {                              // タッチ中なら
+        // 動いた後の指の座標（終了座標）を得る
+        var endX = e.touches[0].pageX - canvas.offsetLeft;  // X座標
+        var endY = e.touches[0].pageY - canvas.offsetTop;   // Y座標
+        // 描画スタイルの設定
+        context.strokeStyle = penColor;                 // 線の色
+        context.lineWidth = penWidth;                   // 線の幅
+        context.lineCap = "round";                      // 線の端を丸める
+        // 開始座標から終了座標に向かって線を引く
+        context.beginPath();                            // 描画開始
+        context.moveTo(startX, startY);                 // 開始座標から
+        context.lineTo(endX, endY);                     // 終了座標に向けて
+        context.stroke();                               // 線を引く
+        // 今の終了座標を次の開始座標にする
+        startX = endX;
+        startY = endY;
+    }
+});
+
+// タッチ終了イベントが起きたら
+canvas.addEventListener("touchend", (e) => {
+    touching = false;
+});
+
+// 色の選択
+var color = document.getElementById("color");           // 色選択用の input 要素の取得
+color.addEventListener("change", () => {                // 色選択ダイアログで選択色が変わったら
+    penColor = color.value;                             // penColor を色選択ダイアログの選択色にする
+});
+
+// 保存ボタンの処理
+var button = document.getElementById("button");         // button 要素の取得
+button.addEventListener("click", () => {                // ボタンがクリックされたら
+    var saveWindow = window.open();                     // 新しいウィンドウ（タブ）を開く
+    var doc = saveWindow.document;                      // そのウィンドウの document 要素を取得
+    var newImg = doc.createElement("img");              // img 要素を新規作成
+    newImg.src = canvas.toDataURL();                    // img 要素の src 属性に canvas 内の画像を設定
+    doc.body.appendChild(newImg);                       // img 要素を body 要素の子要素として追加
+    var newDiv = doc.createElement("div");              // div 要素を新規作成
+    newDiv.innerHTML = "画像を長押しすると保存できます";   // div 要素内に文字列を設定
+    doc.body.appendChild(newDiv);                       // div 要素を body 要素の子要素として追加
+});
+
+</script>
+</body>
+</html>

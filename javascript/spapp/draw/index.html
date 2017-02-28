@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<!-- スマホで見やすくする設定 -->
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<!-- ブラウザのタブに表示されるタイトル -->
+<title>お絵かきアプリ</title>
+</head>
+
+<body>
+<canvas id='canvas' width='300' height='400'></canvas>  <!-- 絵を描くcanvas要素 -->
+<input  id="color" type="color" value="#000000">        <!-- 色選択ダイアログ -->
+
+<script>
+
+var touching = false;                                   // タッチ中か否かを入れる変数
+var startX   = 0;                                       // タッチ開始位置のX座標
+var startY   = 0;                                       // タッチ開始位置のY座標
+var penColor = "#000000";                               // 線の色（#RRGGBB）
+var penWidth = 5;                                       // 線の幅
+
+// canvas要素に描画するためのお決まりの2行
+var canvas  = document.getElementById("canvas");        // canvas 要素の取得
+var context = canvas.getContext("2d");                  // 描画用部品を取得
+
+// タッチ開始イベントが起きたら
+canvas.addEventListener("touchstart", (e) => {
+    touching = true;                                    // タッチ中にする
+    // タッチ開始時の指の座標（開始座標）を得る
+    startX = e.touches[0].pageX - canvas.offsetLeft;    // X座標
+    startY = e.touches[0].pageY - canvas.offsetTop;     // Y座標
+});
+
+// タッチしたまま指が動いたら
+canvas.addEventListener("touchmove", (e) => {
+    e.preventDefault();                                 // 画面をスクロールさせない
+    if(touching == true) {                              // タッチ中なら
+        // 動いた後の指の座標（終了座標）を得る
+        var endX = e.touches[0].pageX - canvas.offsetLeft;  // X座標
+        var endY = e.touches[0].pageY - canvas.offsetTop;   // Y座標
+        // 描画スタイルの設定
+        context.strokeStyle = penColor;                 // 線の色
+        context.lineWidth = penWidth;                   // 線の幅
+        context.lineCap = "round";                      // 線の端を丸める
+        // 開始座標から終了座標に向かって線を引く
+        context.beginPath();                            // 描画開始
+        context.moveTo(startX, startY);                 // 開始座標から
+        context.lineTo(endX, endY);                     // 終了座標に向けて
+        context.stroke();                               // 線を引く
+        // 今の終了座標を次の開始座標にする
+        startX = endX;
+        startY = endY;
+    }
+});
+
+// タッチ終了イベントが起きたら
+canvas.addEventListener("touchend", (e) => {
+    touching = false;
+});
+
+// 色の選択
+var color = document.getElementById("color");           // 色選択用の input 要素の取得
+color.addEventListener("change", () => {                // 色選択ダイアログで選択色が変わったら
+    penColor = color.value;                             // penColor を色選択ダイアログの選択色にする
+});
+
+</script>
+</body>
+</html>
