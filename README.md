@@ -45,7 +45,7 @@ Codes of Kokubun-lab. homepage by Mitsuteru Kokubun
 
 1. [スマホアプリを作ろう](javascript/spapp)
 
-    JavaScript でスマホ用 Web アプリを作ります。テスト用サーバの構築、写真を撮って落書きできるアプリを作り、netlify にアップ（デプロイ）して公開するところまで紹介しました。
+    JavaScript でスマホ用 Web アプリを作ります。テスト用サーバの構築、写真を撮って落書きできるアプリを作り、BitBalloon にアップして公開するところまで紹介しました。
 
     http://www2.aasa.ac.jp/people/mkoku/make/javascript/spapp.html
 
