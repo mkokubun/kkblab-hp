@@ -49,9 +49,14 @@ Codes of Kokubun-lab. homepage by Mitsuteru Kokubun
 
     http://www2.aasa.ac.jp/people/mkoku/make/javascript/spapp.html
 
+2. [スマホのセンサを使う（加速度）](javascript/acc)
+
+    JavaScript でスマホ用の加速度センサを使った Web アプリを作ります。スマホの傾きでプレイヤーを動かして向かってくる隕石をよけるゲームを作ります。
+
+    http://www2.aasa.ac.jp/people/mkoku/make/javascript/acc.html
 
 
-2. 随時増やしていきます
+3. 随時増やしていきます
 
 
 
@@ -64,6 +69,10 @@ Codes of Kokubun-lab. homepage by Mitsuteru Kokubun
 
 ---
 ## 更新履歴
+
+* 2017/03/05
+    * JavaScript 編 に「スマホのセンサを使おう（加速度編）」をアップしました
+
 
 * 2017/02/28
     * JavaScript 編 に「スマホアプリを作ろう」をアップしました
