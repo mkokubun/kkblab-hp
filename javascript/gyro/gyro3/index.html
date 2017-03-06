@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>人魚を救え！</title>
+</head>
+
+<body>
+<div id="txt">ここにスコアを表示</div>          <!-- データを表示するdiv要素 -->
+<canvas id="canvas" width="300" height="400"></canvas>  <!-- 絵を描くcanvas要素 -->
+<canvas id="aid" width="300" height="48"></canvas>      <!-- 救った人魚を置くcanvas要素 -->
+
+<script>
+var alpha = 0, beta = 0, gamma = 0;             // ジャイロの値を入れる変数を3個用意
+var canvas = document.getElementById("canvas"); // canvas要素を取得 
+var context = canvas.getContext("2d");          // 絵を描く部品を取得
+
+// 人魚クラス
+class Mermaid {
+    constructor() {                             // コンストラクタ（初期化処理）の定義
+        this.img    = new Image;                // 人魚の画像を入れる Image オブジェクト
+        this.left   = 0;                        // 人魚のx座標
+        this.top    = 0;                        // 人魚のy座標
+        this.cLeft  = 0;                        // 人魚のcanvas上のx座標
+        this.cTop   = 0;                        // 人魚のcanvas上のx座標
+        this.width  = 0;                        // 人魚の画像の幅
+        this.height = 0;                        // 人魚の画像の高さ
+        this.visible = true;                    // 人魚の表示／非表示
+    }
+    load(imgName) {                             // 人魚の画像を読み込む load メソッドの定義
+        this.img.src = imgName;                 // 読み込み
+        this.img.addEventListener("load", () => {   // 読み込みが完了したら
+            this.width   = this.img.width;          // 幅を設定
+            this.height  = this.img.height;         // 高さを設定
+        });
+        this.left    = Math.floor( Math.random() * (0 + 3300 + 1) ) - 3300; // x座標をランダム化
+        this.top     = Math.floor( Math.random() * (400 - 0 + 1) ) + 0;     // y座標をランダム化
+    }
+}
+
+var mermaidNum = 5;                             // 人魚の数
+var mermaid = new Array(mermaidNum);            // 人魚の配列を宣言
+generateMermaid();                              // 人魚を生成する generateMermaid を実行
+
+var touching = false;                           // タッチパネルに触れているか否かの変数
+var score = 1000;                               // スコア（減点していく）
+var captured = 0;                               // 救った人魚の数
+
+// 人魚を生成する generateMermaid 関数
+function generateMermaid() {
+    for(var i = 0; i < mermaid.length; i++) {   // 全ての人魚について
+        mermaid[i] = new Mermaid();             // 人魚クラスのインスタンスとして初期化
+        mermaid[i].load(i + ".jpg");            // 人魚の画像を読み込む
+    }
+}
+
+// ジャイロセンサの値が変化したら実行される deviceorientation イベント
+window.addEventListener("deviceorientation", (dat) => {
+    alpha = dat.alpha;  // z軸（表裏）まわりの回転の角度（反時計回りがプラス）
+    beta  = dat.beta;   // x軸（左右）まわりの回転の角度（引き起こすとプラス）
+    gamma = dat.gamma;  // y軸（上下）まわりの回転の角度（右に傾けるとプラス）
+});
+
+// 指定時間ごとに繰り返し実行される setInterval(実行する内容, 間隔[ms]) タイマーを設定
+var timer = window.setInterval(() => {
+    drawMermaid();      // drawMermaid 関数を実行
+    displayScore();     // displayScore 関数を実行
+}, 33); // 33msごとに（1秒間に約30回）
+
+// 人魚を描画する drawMermaid 関数
+function drawMermaid() {
+    context.fillStyle = "rgb(153, 217, 234)";   // 塗りつぶし色 
+    context.fillRect(0, 0, canvas.width, canvas.height);    // canvas全体に矩形を描く
+    for(var i = 0; i < mermaid.length; i++) {   // 全ての人魚について
+        if(mermaid[i].visible === false) {      // その人魚が既に救助されていたら
+            continue;                           // 次の人魚へ
+        }
+        // alpha と beta を使って人魚の座標をcanvas上の座標に変換する処理
+        mermaid[i].cLeft = mermaid[i].left + alpha * 10;        // 人魚のcanvas上のx座標を計算
+        mermaid[i].cTop  = mermaid[i].top  + (beta - 60) * 10;  // 人魚のcanvas上のy座標を計算
+        context.drawImage(mermaid[i].img, mermaid[i].cLeft, mermaid[i].cTop);   // 人魚を描画
+    }
+}
+
+// スコアを表示する displayScore 関数
+function displayScore() {
+    score -= 1;                                 // スコアを減点
+    var txt = document.getElementById("txt");   // データを表示するdiv要素の取得
+    txt.innerHTML = "Score: " + score;          // スコアを表示
+    if(captured === mermaidNum) {               // もし全員救っていたら
+        window.clearInterval(timer);            // タイマーを止める
+    }
+}
+
+// タッチ開始イベントが起きたら
+canvas.addEventListener("touchstart", (e) => {
+    e.preventDefault();                         // 画面をスクロールさせない
+    var touchX = e.touches[0].pageX - canvas.offsetLeft;    // タッチしたx座標
+    var touchY = e.touches[0].pageY - canvas.offsetTop;     // タッチしたx座標
+    for(var i = 0; i < mermaid.length; i++) {   // 全ての人魚について
+        if(mermaid[i].visible === false) {      // その人魚が既に救助されていたら
+            continue;                           // 次の人魚へ
+        }
+        // 人魚へのタッチ判定（タッチした座標が人魚画像の中なら）
+        if( touchX >= mermaid[i].cLeft
+         && touchX <= mermaid[i].cLeft + mermaid[i].width
+         && touchY >= mermaid[i].cTop
+         && touchY <= mermaid[i].cTop + mermaid[i].height) {
+            mermaid[i].visible = false;                 // 人魚を消す
+            var aid = document.getElementById("aid");   // 下側のcanvasを取得
+            var ctx = aid.getContext("2d");             // コンテキストの取得
+            ctx.drawImage(mermaid[i].img, i * mermaid[i].width, 0); // 救助した人魚画像の表示
+            captured += 1;                              // 救った人魚の数を加算
+        }
+    }
+});
+</script>
+</body>
+</html>
