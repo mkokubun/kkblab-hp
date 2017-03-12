@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>マーメイド GO</title>
+<style>
+    /* Google マップを表示させるためには style 内で width と height の指定が必要 */
+    #mapDiv {width: 100%; height: 400px;}
+</style>
+</head>
+
+<body>
+<div id="mapDiv"></div>                             <!-- 地図を置くdiv要素 -->
+<img id="getImg" src="" hidden>                     <!-- ★捕獲した人魚を表示するimg要素 -->
+<canvas id="cap" width="300" height="60"></canvas>  <!-- ★捕獲済人魚を入れるcanvas要素 -->
+
+<script>
+var mapDiv = document.getElementById("mapDiv");     // 地図を置く場所
+var gmap;                                           // Googleマップの Map オブジェクトのための変数
+var mark;                                           // Googleマップの Marker オブジェクトのための変数
+
+var mermaids = [];                                  // ★人魚の情報を入れる変数
+var captured = [];                                  // ★人魚を捕獲済みか否かを入れる変数
+loadMermaids();                                     // ★人魚の情報を読み込む
+var getImg = document.getElementById("getImg");     // ★img要素の取得
+var canvas = document.getElementById("cap");        // ★捕獲済人魚を入れるcanvas要素の取得
+var context = canvas.getContext("2d");              // ★contextの取得
+context.fillStyle = "rgb(153, 217, 234)";           // ★塗りつぶす色をターコイズにする
+context.fillRect(0, 0, 300, 60);                    // ★canvasを塗りつぶす
+
+// GPS センサの値が変化したら何らか実行する geolocation.watchPosition メソッド
+navigator.geolocation.watchPosition( (position) => {
+    var lat  = position.coords.latitude;            // 緯度を取得
+    var lng  = position.coords.longitude;           // 経度を取得
+    var accu = position.coords.accuracy;            // 緯度・経度の精度を取得
+    showMyPos(lat, lng);                            // showMyPos 関数を実行
+    calcDistance(lat, lng);
+});
+
+// 自分の位置を表示する showMyPos 関数
+function showMyPos(lat, lng) {
+    var myPos = new google.maps.LatLng(lat, lng);   // Googleマップの LatLng オブジェクトを作成
+    gmap.setCenter(myPos);                          // gmap の中心を myPos の位置にする
+    mark.setPosition(myPos);                        // mark の位置を myPos にする
+}
+
+// 地図の初期化
+function initMap() {
+    // 1回だけ現在位置を測定する getCurrentPosition メソッド
+    navigator.geolocation.getCurrentPosition( (position) => {
+        var lat = position.coords.latitude;         // 緯度を取得
+        var lng = position.coords.longitude;        // 経度を取得
+        var initPos = new google.maps.LatLng(lat, lng); // 初期位置を指定
+        gmap = new google.maps.Map(mapDiv, {        // Map オブジェクトを作成して mapDiv に表示
+            center: initPos,                        // 地図の中心を initPos に設定
+            zoom: 16                                // ズーム倍率
+        });
+        mark = new google.maps.Marker({             // Marker オブジェクトを作成
+            map: gmap,                              // gmap の上に表示する
+            position: initPos,                      // initPos の位置に
+        });
+        placeMermaids();                            // ★人魚を配置する
+    }, (error) => {                                 // エラー処理（今回は特に何もしない）
+    }, {
+        enableHighAccuracy: true                    // 高精度で測定するオプション
+    });
+}
+
+// ★人魚の情報を読み込む loadMermaids 関数
+function loadMermaids() {
+    var req = new XMLHttpRequest();                 // サーバのファイルを読む XMLHttpRequest
+    req.addEventListener("readystatechange", () => {        // 準備状態に変化があった時の処理
+        if(req.readyState === 4 && req.status === 200) {    // データ受信が正常に完了したら
+            mermaids = JSON.parse(req.responseText);        // 読み込んだJSONデータを整形して人魚データに入れる
+        }
+    });
+    req.open("GET", "mermaids.json");               // リクエストを設定
+    req.send();                                     // リクエストを送る
+}
+
+// ★人魚を地図上に配置する placeMermaids 関数
+function placeMermaids() {
+    var mermaidMark = [];                           // 人魚マーカーの配列
+    for(var i = 0; i < mermaids.length; i++) {      // 全ての人魚について
+        var pos = new google.maps.LatLng(mermaids[i].lat, mermaids[i].lng); // 人魚の位置を設定
+        var img = {                                 // 画像の設定
+            url: mermaids[i].img,                   // 画像ファイル名
+            scaledSize: new google.maps.Size(60, 60)    // 画像を縮小表示
+        };
+        mermaidMark[i] = new google.maps.Marker({   // 人魚のマーカーを作成
+            map: gmap,                              // gmap の上に表示する
+            position: pos,                          // pos の位置に
+            icon: img,                              // アイコンを設定
+            title: mermaids[i].name                 // タイトルを設定
+        });
+        captured[i] = false;                        // 捕獲済み状態を全てfalseにする
+    }
+}
+
+// ★自分と人魚との距離を計算する calcDistance 関数
+function calcDistance(lat, lng) {
+    var distance = [];                              // 距離を入れる配列
+    var myPos = new google.maps.LatLng(lat, lng);   // Googleマップの LatLng オブジェクトを作成
+    for(var i = 0; i < mermaids.length; i++) {      // 全ての人魚について
+        var pos = new google.maps.LatLng(mermaids[i].lat, mermaids[i].lng);                 // 人魚の位置を設定
+        distance[i] = google.maps.geometry.spherical.computeDistanceBetween(myPos, pos);    // 距離を求める
+        // 捕獲の判定と捕獲した時のエフェクト
+        if(distance[i] < 20 && captured[i] === false) {         // 距離が20m未満、かつ、まだ捕獲していないなら
+            captured[i] = true;                                 // 捕獲済にする
+            getImg.src = mermaids[i].img;                       // 捕獲された人魚の画像を設定
+            context.drawImage(getImg, i * 60, 0, 60, 60);       // 捕獲済の枠に人魚の画像を表示
+            getImg.hidden = false;                              // img要素を表示
+            mapDiv.hidden = true;                               // 地図を非表示
+            getImg.addEventListener("click", () => {            // img要素がクリックされたら
+                getImg.hidden = true;                           // img要素を非表示
+                mapDiv.hidden = false;                          // 地図を表示
+            });
+        }
+    }
+}
+</script>
+
+<!-- Google マップを読み込むための外部スクリプトの読み込み -->
+<!-- API_KEY の部分を自身で取得した APIキーで置き換える -->
+<!-- callback=initMap により、マップの準備ができたら initMap 関数が実行される -->
+<!-- ★距離を求めるライブラリを使うために末尾に「&libraries=geometry」を追加 -->
+<script src="https://maps.googleapis.com/maps/api/js?key=API_KEY&callback=initMap&libraries=geometry">
+</script>
+</body>
+</html>

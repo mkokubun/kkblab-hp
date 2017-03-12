@@ -11,7 +11,9 @@ Codes of Kokubun-lab. homepage by Mitsuteru Kokubun
 ## コンテンツ
 
 
+
 ### Processing 編
+
 
 1. [AR を作ろう](processing/ar)
 
@@ -41,7 +43,9 @@ Codes of Kokubun-lab. homepage by Mitsuteru Kokubun
 
 
 
+
 ### JavaScript 編
+
 
 1. [スマホアプリを作ろう](javascript/spapp)
 
@@ -49,21 +53,29 @@ Codes of Kokubun-lab. homepage by Mitsuteru Kokubun
 
     http://www2.aasa.ac.jp/people/mkoku/make/javascript/spapp.html
 
+
 2. [スマホの加速度センサを使う](javascript/acc)
 
-    JavaScript でスマホ用の加速度センサを使った Web アプリを作ります。スマホの傾きでプレイヤーを動かして向かってくる隕石をよけるゲームを作ります。
+    JavaScript でスマホの加速度センサを使った Web アプリを作ります。スマホの傾きでプレイヤーを動かして向かってくる隕石をよけるゲームを作ります。
 
     http://www2.aasa.ac.jp/people/mkoku/make/javascript/acc.html
 
 
 3. [スマホのジャイロを使う](javascript/gyro)
 
-    JavaScript でスマホ用のジャイロセンサを使った Web アプリを作ります。スマホで 360度を見回して人魚を探してタッチで救い、全ての人魚を助ける時間を競うゲームを作ります。
+    JavaScript でスマホのジャイロセンサを使った Web アプリを作ります。スマホで 360度を見回して人魚を探してタッチで救い、全ての人魚を助ける時間を競うゲームを作ります。
 
     http://www2.aasa.ac.jp/people/mkoku/make/javascript/gyro.html
 
 
-4. 随時増やしていきます
+4. [スマホの GPS を使う](javascript/gps)
+
+    JavaScript でスマホの GPS を使った Web アプリを作ります。ポケモンGO のように、地図上の様々な場所に配置した人魚を捕まえに行く「マーメイドGO」を作ります。
+
+    http://www2.aasa.ac.jp/people/mkoku/make/javascript/gps.html
+
+
+5. 随時増やしていきます
 
 
 
@@ -76,6 +88,10 @@ Codes of Kokubun-lab. homepage by Mitsuteru Kokubun
 
 ---
 ## 更新履歴
+
+
+* 2017/03/12
+    * JavaScript 編 に「スマホの GPS を使う」をアップしました
 
 
 * 2017/03/06
