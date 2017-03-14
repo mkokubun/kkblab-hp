@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>アニメーションとインタラクション</title>
+<!-- A-Frame を使うための外部スクリプトの読み込み -->
+<script src="https://aframe.io/releases/0.5.0/aframe.min.js"></script>
+</head>
+
+<body>
+<!-- A-Frame の VR は必ず a-scene タグで囲み、その中に様々なオブジェクト（entities）を置く -->
+<a-scene>
+    <!-- メディアを入れておく a-assets タグ -->
+    <a-assets>
+        <img id="boxTexture" src="huchan.jpg">      <!-- 箱のテクスチャ -->
+        <img id="groundTexture" src="floor.jpg">    <!-- 地面のテクスチャ -->
+        <img id="skyTexture" src="sechelt.jpg">     <!-- 背景のテクスチャ -->
+    </a-assets>
+
+    <!-- a-box：直方体 -->
+    <!-- src="#テクスチャ"  position="x y z" [m]  rotation="x y z" [deg]  scale="w h d" [m] -->
+    <a-box src="#boxTexture"
+        position="0 2 -5"
+        rotation="0 45 45"
+        scale="2 2 2"
+        color="rgb(222, 222, 222)">
+        <!-- アニメーションするための a-animation タグ（a-box の子要素として指定すると a-box に適用される） -->
+        <!-- attribute="動かす属性"  to="動かす先"  dur="持続時間"  begin="アニメ開始イベント" -->
+        <a-animation attribute="position"
+            to="0 3 -5"
+            dur="2000"
+            direction="alternate"
+            repeat="indefinite">
+        </a-animation>
+        <a-animation attribute="scale"
+            to="2.3 2.3 2.3"
+            dur="300"
+            begin="mouseenter">
+        </a-animation>
+        <a-animation attribute="scale"
+            to="2 2 2"
+            dur="300"
+            begin="mouseleave">
+        </a-animation>
+        <a-animation attribute="rotation"
+            to="360 405 45"
+            dur="2000"
+            begin="click">
+        </a-animation>
+    </a-box>
+
+    <!-- 地面と背景 src="#テクスチャ" -->
+    <a-plane src="#groundTexture"
+        rotation="-90 0 0"
+        width="15"
+        height="15">
+    </a-plane>
+    <a-sky src="#skyTexture"
+        color="rgb(127, 127, 127)">
+    </a-sky>
+
+    <!-- カメラを操作する a-camera タグ -->
+    <a-camera>
+        <a-cursor></a-cursor>   <!-- インタラクションするための a-cursor（視線カーソル）タグ -->
+    </a-camera>
+</a-scene>
+</body>
+</html>

@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>VR 空間にカメラ映像を置いて MR</title>
+<!-- A-Frame を使うための外部スクリプトの読み込み -->
+<script src="https://aframe.io/releases/0.5.0/aframe.min.js"></script>
+</head>
+
+<body>
+<!-- A-Frame の VR は必ず a-scene タグで囲み、その中に様々なオブジェクト（entities）を置く -->
+<a-scene>
+    <!-- メディアを入れておく a-assets タグ -->
+    <a-assets>
+        <a-asset-item id="modelObj" src="huchan.obj"></a-asset-item>    <!-- objファイル -->
+        <a-asset-item id="modelMtl" src="huchan.mtl"></a-asset-item>    <!-- mtlファイル -->
+        <video id="cam" width="1280" autoplay>      <!-- カメラの映像を流す video 要素 -->
+    </a-assets>
+
+    <!-- obj 形式の CG モデルを置く a-obj-model タグ、src 属性で obj、mtl 属性で mtl を指定 -->
+    <a-obj-model src="#modelObj" mtl="#modelMtl"
+        position="0 2 -5"
+        scale="0.6 0.6 0.6">
+        <!-- アニメーションするための a-animation タグ（a-entity の子要素として指定） -->
+        <!-- attribute="動かす属性"  to="動かす先"  dur="持続時間"  begin="アニメ開始イベント" -->
+        <a-animation attribute="position"
+            to="0 2.5 -5"
+            dur="2000"
+            direction="alternate"
+            repeat="indefinite">
+        </a-animation>
+        <a-animation attribute="scale"
+            to="0.8 0.8 0.8"
+            dur="300"
+            begin="mouseenter">
+        </a-animation>
+        <a-animation attribute="scale"
+            to="0.6 0.6 0.6"
+            dur="300"
+            begin="mouseleave">
+        </a-animation>
+        <a-animation attribute="rotation"
+            to="360 360 0"
+            dur="2000"
+            begin="click">
+        </a-animation>
+    </a-obj-model>
+
+    <a-camera>
+        <!-- 動画を置く a-video タグを a-camera の子要素にすることで -->
+        <!-- リアルカメラの映像が CG カメラ（スマホの動き）についてくる -->
+        <a-video src="#cam" position="0 0 -5" width="16" height="12"></a-video>
+        <a-cursor></a-cursor>
+    </a-camera>
+</a-scene>
+
+<script>
+    // スマホのカメラやWebカメラ（mediaDevice）の映像を取得する
+    var media = navigator.mediaDevices.getUserMedia({
+        video: {facingMode: "environment"},             // バックカメラを使う
+        audio: false                                    // 音声は使わない
+    });
+    // mediaDevice の準備ができたら
+    media
+    .then((stream) => {                                 // 取得成功時の関数
+        var cam = document.getElementById("cam");       // video要素を取得
+        cam.src = window.URL.createObjectURL(stream);   // video要素にメディアストリームを入れる
+    })
+    .catch((err) => {                                   // エラー時の関数
+        window.alert(err);                              // 警告ダイアログにエラーを表示
+    });
+</script>
+</body>
+</html>
