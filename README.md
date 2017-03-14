@@ -75,7 +75,14 @@ Codes of Kokubun-lab. homepage by Mitsuteru Kokubun
     http://www2.aasa.ac.jp/people/mkoku/make/javascript/gps.html
 
 
-5. 随時増やしていきます
+5. [スマホ VR を作ろう](javascript/vr)
+
+    A-Frame フレームワークを使って「超簡単」に VR コンテンツを作る方法を紹介します。おまけとして、通常の VR に加えて、拡張現実 (AR) や複合現実 (MR) にも挑戦します。
+
+    http://www2.aasa.ac.jp/people/mkoku/make/javascript/vr.html
+
+
+6. 随時増やしていきます
 
 
 
@@ -88,6 +95,10 @@ Codes of Kokubun-lab. homepage by Mitsuteru Kokubun
 
 ---
 ## 更新履歴
+
+
+* 2017/03/14
+    * JavaScript 編 に「スマホ VR を作ろう」をアップしました
 
 
 * 2017/03/12
