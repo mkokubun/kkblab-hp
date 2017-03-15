@@ -82,7 +82,14 @@ Codes of Kokubun-lab. homepage by Mitsuteru Kokubun
     http://www2.aasa.ac.jp/people/mkoku/make/javascript/vr.html
 
 
-6. 随時増やしていきます
+6. [ゲームパッドを使う](javascript/pad)
+
+    スマホで Bluetooth のゲームパッドのデータを取得します。また、上で作った VR コンテンツにゲームパッドのプログラムを加えて、VR 空間を動き回れるように改造します。
+
+    http://www2.aasa.ac.jp/people/mkoku/make/javascript/pad.html
+
+
+7. 随時増やしていきます
 
 
 
@@ -95,6 +102,10 @@ Codes of Kokubun-lab. homepage by Mitsuteru Kokubun
 
 ---
 ## 更新履歴
+
+
+* 2017/03/15
+    * JavaScript 編 に「ゲームパッドを使う」をアップしました
 
 
 * 2017/03/14
