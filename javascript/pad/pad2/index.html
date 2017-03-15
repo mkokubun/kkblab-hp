@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>VR でゲームパッドを使う</title>
+<!-- A-Frame を使うための外部スクリプトの読み込み -->
+<script src="https://aframe.io/releases/0.5.0/aframe.min.js"></script>
+</head>
+
+<body>
+<!-- A-Frame の VR は必ず a-scene タグで囲み、その中に様々なオブジェクト（entities）を置く -->
+<a-scene>
+    <!-- メディアを入れておく a-assets タグ -->
+    <a-assets>
+        <a-asset-item id="modelObj" src="huchan.obj"></a-asset-item>    <!-- objファイル -->
+        <a-asset-item id="modelMtl" src="huchan.mtl"></a-asset-item>    <!-- mtlファイル -->
+        <img id="groundTexture" src="floor.jpg">    <!-- 地面のテクスチャ -->
+        <img id="skyTexture" src="sechelt.jpg">     <!-- 背景のテクスチャ -->
+    </a-assets>
+
+    <!-- obj 形式の CG モデルを置く a-obj-model タグ、src 属性で obj、mtl 属性で mtl を指定 -->
+    <a-obj-model src="#modelObj" mtl="#modelMtl"
+        position="0 2 -5"
+        scale="0.6 0.6 0.6">
+        <!-- アニメーションするための a-animation タグ（a-entity の子要素として指定） -->
+        <!-- attribute="動かす属性"  to="動かす先"  dur="持続時間"  begin="アニメ開始イベント" -->
+        <a-animation attribute="position"
+            to="0 2.5 -5"
+            dur="2000"
+            direction="alternate"
+            repeat="indefinite">
+        </a-animation>
+        <a-animation attribute="scale"
+            to="0.8 0.8 0.8"
+            dur="300"
+            begin="mouseenter">
+        </a-animation>
+        <a-animation attribute="scale"
+            to="0.6 0.6 0.6"
+            dur="300"
+            begin="mouseleave">
+        </a-animation>
+        <a-animation attribute="rotation"
+            to="360 360 0"
+            dur="2000"
+            begin="click">
+        </a-animation>
+    </a-obj-model>
+
+    <!-- 地面と背景 src="#テクスチャ" -->
+    <a-plane src="#groundTexture"
+        rotation="-90 0 0"
+        width="15"
+        height="15">
+    </a-plane>
+    <a-sky src="#skyTexture"
+        color="rgb(127, 127, 127)">
+    </a-sky>
+
+    <!-- カメラを操作する a-camera タグ -->
+    <a-camera  id="cam">        <!-- ★a-camera に id を設定 -->
+        <a-cursor></a-cursor>   <!-- インタラクションするための a-cursor（視線カーソル）タグ -->
+    </a-camera>
+</a-scene>
+
+<script>
+// ★ゲームパッドの状態を繰り返し取得する loop 関数
+function loop() {
+    requestAnimationFrame(loop);                    // loop 関数を繰り返す
+    var pad = navigator.getGamepads();              // ゲームパッドの状態を取得
+    var cam = document.getElementById("cam");       // a-camera 要素（カメラ）の取得
+    var pos = cam.getAttribute("position");         // カメラの position 属性を取得
+    var rot = cam.getAttribute("rotation");         // カメラの rotation 属性を取得
+    var angle;                                      // カメラの角度
+    if(pad[0].axes[0] <= 0) {                       // 前進時と後退時で加算する角度の正負を逆転
+        angle = rot.y + 90 + pad[0].axes[1] * 45;   // 前進時はスティック値で角度を加算
+    } else {
+        angle = rot.y + 90 - pad[0].axes[1] * 45;   // 後退時はスティック値で角度を減算
+    }
+    var speed = 0.1 * pad[0].axes[0];               // スティックの前後の値で速度を決定
+    pos.x -= Math.cos(angle * Math.PI / 180) * speed;   // 横方向の位置 X の計算
+    pos.z += Math.sin(angle * Math.PI / 180) * speed;   // 前後方向の位置 Z の計算
+    cam.setAttribute("position", pos);              // カメラの position 属性に反映
+}
+
+// loop 関数を呼ぶ処理
+window.addEventListener("gamepadconnected", loop);  // ゲームパッドが接続されたら loop 開始
+if(!window.ongamepadconnected) { loop(); }          // Chrome はイベントが起きないので直接 loop 開始
+</script>
+</body>
+</html>
