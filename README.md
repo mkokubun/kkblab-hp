@@ -89,7 +89,14 @@ Codes of Kokubun-lab. homepage by Mitsuteru Kokubun
     http://www2.aasa.ac.jp/people/mkoku/make/javascript/pad.html
 
 
-7. 随時増やしていきます
+7. [顔・表情認識](javascript/face)
+
+    clmtracr.js を使って顔や表情の認識をして、SNOW アプリの「顔認識スタンプ」のようなアプリを作ります。
+
+    http://www2.aasa.ac.jp/people/mkoku/make/javascript/face.html
+
+
+8. 随時増やしていきます
 
 
 
@@ -102,6 +109,10 @@ Codes of Kokubun-lab. homepage by Mitsuteru Kokubun
 
 ---
 ## 更新履歴
+
+
+* 2017/03/20
+    * JavaScript 編 に「顔・表情認識」をアップしました
 
 
 * 2017/03/15
