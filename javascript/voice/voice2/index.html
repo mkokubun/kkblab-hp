@@ -1,0 +1,39 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>音声認識アプリ</title>
+  </head>
+  <body>
+    <input id="btn" type="button" value="認識開始">
+    <div id="txt">ここに音声認識結果を表示</div>
+
+    <script>
+      var recog = new webkitSpeechRecognition();  // 音声認識オブジェクト
+      var btn = document.getElementById("btn");
+      var txt = document.getElementById("txt");
+
+      // ボタンを押した時の処理
+      btn.addEventListener("click", function() {
+        recog.lang = "ja-JP";   // 認識する言語の設定
+        recog.start();          // 音声認識をスタート
+      });
+
+      // 認識開始した時
+      recog.addEventListener("soundstart", function() {
+        txt.innerHTML = "認識中...";
+      });
+
+      // 認識が成功した時
+      recog.addEventListener("result", function(ret) {
+        txt.innerHTML = ret.results[0][0].transcript;
+      });
+
+      // 認識に失敗した時
+      recog.addEventListener("nomatch", function() {
+        txt.innerHTML = "認識できませんでした";
+      });
+    </script>
+  </body>
+</html>

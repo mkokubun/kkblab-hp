@@ -103,7 +103,11 @@ Codes of Kokubun-lab. homepage by Mitsuteru Kokubun
     https://www2.aasa.ac.jp/people/mkoku/make/javascript/ar.html
 
 
-8. 随時増やしていきます
+9. [音声合成と音声認識](javascript/voice)
+
+    WebSpeechAPI を使って、簡単な音声合成と音声認識アプリを作ります。
+
+10. 随時増やしていきます
 
 
 
@@ -116,6 +120,9 @@ Codes of Kokubun-lab. homepage by Mitsuteru Kokubun
 
 ---
 ## 更新履歴
+
+* 2017/10/03
+    * JavaScript 編 に「音声合成と音声認識」をアップしました
 
 
 * 2017/09/10
