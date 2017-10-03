@@ -107,6 +107,9 @@ Codes of Kokubun-lab. homepage by Mitsuteru Kokubun
 
     WebSpeechAPI を使って、簡単な音声合成と音声認識アプリを作ります。
 
+    https://www2.aasa.ac.jp/people/mkoku/make/javascript/voice.html
+
+
 10. 随時増やしていきます
 
 
